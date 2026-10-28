@@ -1,5 +1,7 @@
 import Dependencies
 import Foundation
+import HTTPRequestBuilder
+import HTTPRequestClient
 import Sharing
 import Testing
 
@@ -1241,5 +1243,115 @@ private final class Box<T: Sendable>: @unchecked Sendable {
     // keychain, and left memory empty.
     #expect(session == nil)
     #expect(loadsWhileParked.value == 0)
+  }
+}
+
+// MARK: - HTTPTransport Tests
+
+private struct User: Decodable, Equatable {
+  let name: String
+}
+
+private struct ServerMessage: Error, Decodable, Equatable {
+  let message: String
+}
+
+/// Records each request and replies with a fixed status and body.
+private final class MockTransport: HTTPTransport, @unchecked Sendable {
+  let statusCode: Int
+  let body: Data
+
+  private(set) var requests: [URLRequest] = []
+
+  init(statusCode: Int = 200, body: String) {
+    self.statusCode = statusCode
+    self.body = Data(body.utf8)
+  }
+
+  func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+    requests.append(request)
+
+    let response = HTTPURLResponse(
+      url: request.url!,
+      statusCode: statusCode,
+      httpVersion: nil,
+      headerFields: ["Content-Type": "application/json"]
+    )!
+
+    return (body, response)
+  }
+}
+
+private func transportClient() -> JWTAuthClient {
+  JWTAuthClient(
+    baseURL: { "https://api.example.com" },
+    refresh: { _ in
+      Issue.record("Refresh must not run")
+      throw CancellationError()
+    }
+  )
+}
+
+@Test func sendUsesInjectedTransport() async throws {
+  let transport = MockTransport(body: #"{"name":"Ada"}"#)
+
+  try await withDependencies {
+    $0.httpRequestClient = .liveValue
+  } operation: {
+    let response: SuccessResponse<User> = try await transportClient().send(
+      Request(path: "users/me"),
+      urlSession: transport
+    )
+
+    #expect(response.value == User(name: "Ada"))
+    #expect(transport.requests.count == 1)
+    #expect(transport.requests.first?.url?.absoluteString == "https://api.example.com/users/me")
+    #expect(transport.requests.first?.value(forHTTPHeaderField: "Authorization") == nil)
+  }
+}
+
+@Test func sendAuthenticatedUsesInjectedTransportWithBearerToken() async throws {
+  let transport = MockTransport(body: #"{"name":"Ada"}"#)
+
+  try await withDependencies {
+    $0.httpRequestClient = .liveValue
+  } operation: {
+    @Shared(.authSession) var session
+    $session.withLock { $0 = AuthTokens(access: validJWT, refresh: "refresh").toSession() }
+
+    let response: SuccessResponse<User> = try await transportClient().sendAuthenticated(
+      Request(path: "users/me"),
+      urlSession: transport
+    )
+
+    #expect(response.value == User(name: "Ada"))
+    #expect(transport.requests.count == 1)
+
+    #expect(
+      transport.requests.first?.value(forHTTPHeaderField: "Authorization") == "Bearer \(validJWT)")
+  }
+}
+
+@Test func sendAuthenticatedDecodesServerErrorFromInjectedTransport() async throws {
+  let transport = MockTransport(body: #"{"message":"Invalid"}"#)
+
+  try await withDependencies {
+    $0.httpRequestClient = .liveValue
+  } operation: {
+    @Shared(.authSession) var session
+    $session.withLock { $0 = AuthTokens(access: validJWT, refresh: "refresh").toSession() }
+
+    let response: Response<User, ServerMessage> = try await transportClient().sendAuthenticated(
+      Request(path: "users/me"),
+      urlSession: transport
+    )
+
+    #expect(transport.requests.count == 1)
+
+    #expect(
+      transport.requests.first?.value(forHTTPHeaderField: "Authorization") == "Bearer \(validJWT)")
+
+    #expect(response.error == ServerMessage(message: "Invalid"))
+    #expect(response.value == nil)
   }
 }

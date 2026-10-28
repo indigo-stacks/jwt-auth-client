@@ -78,6 +78,32 @@ public var delete: @Sendable (_ key: Keys) async -> Void
 public var reset: @Sendable () async -> Void
 ```
 
+## Migrating from 2.x to 3.0
+
+JWTAuth no longer depends on Pulse. It uses `HTTPTransport` from http-request-client 2.0, a Foundation-only protocol with one requirement:
+
+```swift
+public protocol HTTPTransport: Sendable {
+  func data(for request: URLRequest) async throws -> (Data, URLResponse)
+}
+```
+
+`URLSession` conforms to `HTTPTransport`, so calls that use the default `URLSession.shared` do not change.
+If you pass a custom session, replace `URLSessionProtocol` with `HTTPTransport`.
+
+To keep Pulse network logging, add Pulse to your app target (for example in Debug only) and conform its proxy:
+
+```swift
+#if DEBUG
+import Pulse
+import HTTPRequestClient
+
+extension URLSessionProxy: @retroactive HTTPTransport {}
+#endif
+```
+
+Then pass the proxy as `urlSession` to `send` or `sendAuthenticated`.
+
 ## Documentation
 
 This project uses [Swift-DocC](https://github.com/swiftlang/swift-docc-plugin) for documentation generation.
