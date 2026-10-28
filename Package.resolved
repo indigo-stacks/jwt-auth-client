@@ -1,5 +1,5 @@
 {
-  "originHash" : "1b373b30da02c2239e275bdf0d3620af94f4d77c31382dbc5a09a34c65bca5af",
+  "originHash" : "4f30fa31b0c2b0c6434c1624a413d4ed3abf96b5bb54f8f2856eedeab17d000b",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -13,7 +13,7 @@
     {
       "identity" : "http-request-builder",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/indigo-ce/http-request-builder",
+      "location" : "https://github.com/indigo-stacks/http-request-builder",
       "state" : {
         "revision" : "b7b20a6c5b71790633fd80c4b895f8125951e0ef",
         "version" : "1.2.0"
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/indigo-stacks/http-request-client",
       "state" : {
-        "revision" : "9133b9e19aabb60fa9194de6b291541fcc3823b4",
-        "version" : "1.6.0"
+        "revision" : "98d16df8075d346acd3198b5cf2ebb959e0eff47",
+        "version" : "2.0.0"
       }
     },
     {
@@ -35,15 +35,6 @@
       "state" : {
         "revision" : "c4e60d71afb09c1e7f8a11a7db629469da92630b",
         "version" : "4.0.0"
-      }
-    },
-    {
-      "identity" : "pulse",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/Pulse.git",
-      "state" : {
-        "revision" : "94b92731d370c129bb771e9c18f69b0a44ccca5c",
-        "version" : "5.2.3"
       }
     },
     {
