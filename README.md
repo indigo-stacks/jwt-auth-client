@@ -1,13 +1,13 @@
 # 🪻 jwt-auth-client
 
-[![Build Status](https://github.com/indigo-ce/jwt-auth-client/actions/workflows/ci.yml/badge.svg)](https://github.com/indigo-ce/jwt-auth-client/actions)
-[![Documentation](https://img.shields.io/badge/documentation-DocC-blue.svg)](https://indigo-ce.github.io/jwt-auth-client/documentation/jwtauth/)
+[![Build Status](https://github.com/indigo-stacks/jwt-auth-client/actions/workflows/ci.yml/badge.svg)](https://github.com/indigo-stacks/jwt-auth-client/actions)
+[![Documentation](https://img.shields.io/badge/documentation-DocC-blue.svg)](https://indigo-stacks.github.io/jwt-auth-client/documentation/jwtauth/)
 [![Swift](https://img.shields.io/badge/swift-6.0+-orange.svg)](https://swift.org)
 
 A dependency client that handles JWT auth in Apple platform apps using the Swift Composable Architecture (TCA).
 This library is part of the [Indigo Stack](https://indigostack.org).
 
-Full documentation is [available here](https://indigo-ce.github.io/jwt-auth-client/documentation/jwtauth/).
+Full documentation is [available here](https://indigo-stacks.github.io/jwt-auth-client/documentation/jwtauth/).
 
 ## SimpleKeychain
 
@@ -110,7 +110,7 @@ This project uses [Swift-DocC](https://github.com/swiftlang/swift-docc-plugin) f
 
 ### Viewing Documentation Online
 
-The latest documentation is automatically built and deployed [on GitHub Pages](https://indigo-ce.github.io/jwt-auth-client/)
+The latest documentation is automatically built and deployed [on GitHub Pages](https://indigo-stacks.github.io/jwt-auth-client/)
 
 ### Building Documentation Locally
 

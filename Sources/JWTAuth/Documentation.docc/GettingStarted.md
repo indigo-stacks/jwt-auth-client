@@ -7,7 +7,7 @@ This guide will help you integrate `JWTAuthClient` into your TCA application.
 Add the library to your Swift package:
 
 ```swift
-.package(url: "https://github.com/indigo-ce/jwt-auth-client", from: "1.0.0")
+.package(url: "https://github.com/indigo-stacks/jwt-auth-client", from: "1.0.0")
 ```
 
 Then add it to your target dependencies:
